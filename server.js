@@ -5,9 +5,10 @@ const app = express();
 
 app.use(express.json());
 
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY
-});
+// يقرأ المفتاح سواء تسميته GEMINI_API_KEY أو GOOGLE_API_KEY
+const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+
+const ai = new GoogleGenAI({ apiKey });
 
 app.get("/", (req, res) => {
   res.send("Gemini Backend is running");
@@ -23,6 +24,13 @@ app.post("/gemini", async (req, res) => {
       });
     }
 
+    // فحص إذا كان المفتاح موجوداً قبل إرسال الطلب
+    if (!apiKey) {
+      return res.status(500).json({
+        error: "API Key is missing in Render environment variables!"
+      });
+    }
+
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: prompt
@@ -32,12 +40,12 @@ app.post("/gemini", async (req, res) => {
       result: response.text
     });
   } catch (error) {
-    console.error(error);
+    console.error("Gemini API Error:", error);
 
-    // إرجاع تفاصيل الخطأ الحقيقية بدلاً من رسالة عامة
+    // إرجاع رسالة الخطأ الأصلية بالتفصيل لـ Hoppscotch لمعرفة السبب فوراً
     res.status(500).json({
       error: error.message || "Gemini request failed",
-      details: error.stack
+      status: error.status || 500
     });
   }
 });
