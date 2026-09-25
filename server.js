@@ -5,9 +5,8 @@ const app = express();
 
 app.use(express.json());
 
-const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-
-const ai = new GoogleGenAI({ apiKey });
+const apiKey =
+  process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
 
 app.get("/", (req, res) => {
   res.send("Gemini Backend is running");
@@ -29,6 +28,8 @@ app.post("/gemini", async (req, res) => {
       });
     }
 
+    const ai = new GoogleGenAI({ apiKey });
+
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: prompt
@@ -41,8 +42,7 @@ app.post("/gemini", async (req, res) => {
     console.error("Gemini API Error:", error);
 
     res.status(500).json({
-      error: error.message || "Gemini request failed",
-      status: error.status || 500
+      error: error.message || "Gemini request failed"
     });
   }
 });
