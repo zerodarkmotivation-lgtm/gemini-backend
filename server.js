@@ -5,7 +5,6 @@ const app = express();
 
 app.use(express.json());
 
-// يقرأ المفتاح من المتغيرات البيئية
 const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
 
 const ai = new GoogleGenAI({ apiKey });
@@ -30,7 +29,6 @@ app.post("/gemini", async (req, res) => {
       });
     }
 
-    // التحديث لاسم النموذج الأحدث والمطلوب
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: prompt
