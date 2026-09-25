@@ -42,7 +42,7 @@ app.post("/gemini", async (req, res) => {
   } catch (error) {
     console.error("Gemini API Error:", error);
 
-    // إرجاع رسالة الخطأ الأصلية بالتفصيل لـ Hoppscotch لمعرفة السبب فوراً
+    // إرجاع رسالة الخطأ الأصلية بالتفصيل لـ Hoppscotch
     res.status(500).json({
       error: error.message || "Gemini request failed",
       status: error.status || 500
