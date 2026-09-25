@@ -25,7 +25,7 @@ app.post("/gemini", async (req, res) => {
 
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
-      contents: [{ role: "user", parts: [{ text: prompt }] }]
+      contents: prompt
     });
 
     res.json({
@@ -34,8 +34,10 @@ app.post("/gemini", async (req, res) => {
   } catch (error) {
     console.error(error);
 
+    // إرجاع تفاصيل الخطأ الحقيقية بدلاً من رسالة عامة
     res.status(500).json({
-      error: "Gemini request failed"
+      error: error.message || "Gemini request failed",
+      details: error.stack
     });
   }
 });
