@@ -32,6 +32,7 @@ app.post("/gemini", async (req, res) => {
     const ai = new GoogleGenAI({ apiKey });
 
     let contents;
+    let config = {};
 
     // الطلب النصي القديم
     if (!image) {
@@ -57,11 +58,32 @@ app.post("/gemini", async (req, res) => {
           }
         }
       ];
+
+      // نجعل Gemini يعيد JSON منظم عند تحليل الصورة
+      config = {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: "object",
+          properties: {
+            found: {
+              type: "boolean"
+            },
+            x: {
+              type: "integer"
+            },
+            y: {
+              type: "integer"
+            }
+          },
+          required: ["found", "x", "y"]
+        }
+      };
     }
 
     const response = await ai.models.generateContent({
       model: "gemini-3.8-flash",
-      contents: contents
+      contents: contents,
+      config: config
     });
 
     res.json({
